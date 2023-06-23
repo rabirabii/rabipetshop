@@ -7,9 +7,11 @@
     "node": "18.10.0"
   },
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "concurrently \"npm start\" \"npm run client\" ",
     "start": "node server.js",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false"
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client"
+
   },
   "author": "Rabi",
   "license": "ISC",
