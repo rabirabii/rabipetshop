@@ -1,0 +1,171 @@
+/*---------------------
+  Header
+-----------------------*/
+$primary-color: #ca1515;
+$secondary-color: #0c2b4b;
+$white-color: #ffffff;
+$heading-color: #111111;
+$para-color: #5C5C5C;
+$black-color: #000000;
+$heading-color-2: #323232;
+$normal-color: #1c1c1c;
+$background: #f5f5f5;
+$background-2: #f2f2f2;
+$border: #ebebeb;
+$border-1: #e1e1e1;
+
+$fm-unna: 'Unna', serif;
+$fm-nunito: 'Nunito Sans', sans-serif;
+@import "../../scss-config/mixins.scss";
+
+
+
+.main-header {
+  width: 100%;
+  padding: 0 20px;
+  z-index: 99;
+  background-color: white;
+  color: black;
+  border-bottom: 1px solid;
+  border-color: rgba(0, 0, 0, 0.1);
+  @include md {
+      padding: 0 40px;
+  }
+  .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 40px; /* Updated: Decreased the height */
+      max-width: 1200px;
+      margin: 0 auto;
+      @include md {
+          height: 60px; /* Updated: Decreased the height */
+      }
+  }
+  .left {
+      list-style-type: none;
+      display: none;
+      gap: 15px; /* Updated: Decreased the gap */
+      @include md {
+          display: flex;
+      }
+      li {
+          font-size: 12px; /* Updated: Decreased the font size */
+          font-weight: 600;
+          text-transform: uppercase;
+          cursor: pointer;
+          &:hover {
+              opacity: 0.6;
+          }
+      }
+  }
+  .center {
+      font-size: 18px; /* Updated: Decreased the font size */
+      font-weight: 700;
+      cursor: pointer;
+      @include md {
+          font-size: 28px; /* Updated: Decreased the font size */
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+      }
+  }
+  .right {
+      display: flex;
+      align-items: center;
+      gap: 15px; /* Updated: Decreased the gap */
+      @include md {
+          gap: 20px; /* Updated: Decreased the gap */
+      }
+      svg {
+          font-size: 16px; /* Updated: Decreased the font size */
+          cursor: pointer;
+          @include md {
+              font-size: 20px; /* Updated: Decreased the font size */
+          }
+          &:hover {
+              opacity: 0.6;
+          }
+      }
+      .cart-icon {
+          position: relative;
+          span {
+            min-width: 18px; /* Updated: Decreased the min-width */
+            text-align: center;
+            background: #8e2de2;
+            padding: 2px; /* Updated: Decreased the padding */
+            position: absolute;
+            top: -4px; /* Updated: Decreased the top position */
+            right: -10px; /* Updated: Decreased the right position */
+            font-size: 10px; /* Updated: Decreased the font size */
+            line-height: 1;
+            border-radius: 9px; /* Updated: Decreased the border radius */
+          }
+        }
+        
+        /* Wishlist popup */
+        .wishlist-popup {
+          position: absolute;
+          top: 100%;
+          right: 0;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          z-index: 99;
+          min-width: 200px;
+          max-width: 300px;
+          padding: 10px;
+          display: none;
+        }
+        
+        .open {
+          display: block !important;
+        }
+        .cart-popup {
+          position: absolute;
+          top: 100%;
+          right: 0;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          z-index: 99;
+          min-width: 200px;
+          max-width: 300px;
+          padding: 10px;
+          display: none;
+        }
+        
+        .open-cart {
+          display: block !important;
+        }
+        .dropdown-menu {
+          top: 100%;
+          left: 0;
+          width: 270px;
+          padding: 0;
+        }
+        
+        .dropdown-menu ul {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+        }
+        
+        .dropdown-menu ul li {
+          font-size: 14px;
+        }
+        
+        .dropdown-menu ul li a {
+          display: flex;
+          align-items: center;
+          color: black;
+          text-decoration: none;
+          padding: 8px;
+          transition: background-color 0.3s ease;
+        }
+        
+        .dropdown-menu ul li a:hover {
+          background-color: #f5f5f5;
+        }
+}
+}

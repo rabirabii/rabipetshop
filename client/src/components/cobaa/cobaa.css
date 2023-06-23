@@ -1,0 +1,132 @@
+/* Navbar Styles */
+.main-header {
+    background-color: #f8f8f8;
+    padding: 20px;
+    top: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    z-index: 99;
+  }
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .left,
+  .right {
+    display: flex;
+    align-items: center;
+    list-style-type: none;
+  }
+  
+  .left li,
+  .right div,
+  .right span,
+  .right a {
+    margin-left: 10px;
+    font-size: 14px;
+  }
+  
+  .right div,
+  .right span,
+  .right a {
+    cursor: pointer;
+  }
+  
+  .center {
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .search-input-container {
+    position: relative;
+  }
+  
+  .search-input {
+    padding: 8px 12px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+  }
+  
+  .search-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+  }
+  
+  .search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    z-index: 999;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+  }
+  
+  .search-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .search-item-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+  
+  .search-item-name {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .favorite-icon,
+  .cart-icon {
+    position: relative;
+  }
+  
+  .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: #fff;
+    font-size: 12px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .header-link {
+    margin-left: 10px;
+    font-size: 14px;
+    text-decoration: none;
+    color: #333;
+  }
+  
