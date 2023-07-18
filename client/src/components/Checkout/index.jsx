@@ -154,7 +154,7 @@ const ShippingInfo = ({
   user,
   country,
   setCountry,
-  city,
+  provience,
   setCity,
   userInfo,
   setUserInfo,
@@ -233,14 +233,14 @@ const ShippingInfo = ({
             </select>
           </div>
           <div className="w-[50%]">
-            <label className="block pb-2">City</label>
+            <label className="block pb-2">Provience</label>
             <select
               className="w-[95%] border h-[40px] rounded-[5px]"
-              value={city}
+              value={provience}
               onChange={(e) => setCity(e.target.value)}
             >
               <option className="block pb-2" value="">
-                Choose your City
+                Choose your Provience
               </option>
               {State &&
                 State.getStatesOfCountry(country).map((item) => (

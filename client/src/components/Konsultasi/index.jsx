@@ -48,7 +48,16 @@ const Konsultasi = () => {
   };
 
   // Decide whether the button should be displayed or not
-  const isWithWorkingHours = currentGMTPlus7 >= 9 && currentGMTPlus7 < 15;
+  const isWithWorkingHours = () => {
+    if (doctors.length > 0) {
+      const startHour = parseInt(doctors[0].startTime.split(":")[0]);
+      const endHour = parseInt(doctors[0].endTime.split(":")[0]);
+      const currentHour = currentGMTPlus7;
+
+      return currentHour >= startHour && currentHour < endHour;
+    }
+    return false;
+  };
   const [openDialog, setOpenDialog] = useState(false);
 
   const navigate = useNavigate();
@@ -131,6 +140,7 @@ const Konsultasi = () => {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
+                    width: "300px",
                     height: "100%",
                     border: "1px solid #e0e0e0",
                     boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
@@ -179,6 +189,10 @@ const Konsultasi = () => {
                         <Typography color="textSecondary" variant="subtitle2">
                           License Number: {doctor.licenseNumber}
                         </Typography>
+                        <Typography color="textSecondary" variant="subtitle2">
+                          Available at from {doctor.startTime} to{" "}
+                          {doctor.endTime}
+                        </Typography>
                       </Box>
                     </Box>
                     <Typography variant="body2" component="p">
@@ -191,15 +205,8 @@ const Konsultasi = () => {
                       borderTop: "1px solid #f0f0f0",
                     }}
                   >
-                    {isWithWorkingHours && (
+                    {isWithWorkingHours() && (
                       <>
-                        <Button
-                          size="small"
-                          variant="contained"
-                          onClick={() => handleReserve(doctor._id)}
-                        >
-                          Reserve
-                        </Button>
                         <Button
                           size="small"
                           variant="contained"
@@ -226,19 +233,6 @@ const Konsultasi = () => {
           />
         )}
       </Box>
-
-      <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle>Make a Reservation</DialogTitle>
-        <DialogContent>
-          <ReservationForm handleReserve={handleReserve} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} color="primary">
-            Cancel
-          </Button>
-          <Button color="primary">Reserve</Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 };

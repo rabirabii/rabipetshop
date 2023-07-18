@@ -24,7 +24,7 @@ const Footer = () => {
             mb="30px"
             color={shades.secondary[300]}
           >
-            Smart pet Petshop
+            Rabi Petshop🐇
           </Typography>
           <div>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do

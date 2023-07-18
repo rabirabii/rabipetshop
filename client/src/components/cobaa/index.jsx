@@ -188,7 +188,7 @@ const Cobaa = () => {
             </ul>
           </Box>
           <div className="center" onClick={() => navigate("/")}>
-            Smart pet Petshop
+            Rabi Petshop🐇
           </div>
           <div className="right">
             <span

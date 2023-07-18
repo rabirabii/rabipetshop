@@ -25,43 +25,54 @@ const EventCard = ({ active, data }) => {
       }
     }
   };
+
   return (
     <div
       className={`w-full block bg-white rounded-lg ${
         active ? "unset" : "mb-12"
       } lg:flex p-2`}
     >
-      <div className="w-full lg:-w[50%] m-auto">
+      <div className="w-full lg:w-1/2 m-auto">
         <img src={`${backend_url}${data.images[0]}`} alt="" />
       </div>
-      <div className="w-full lg:[w-50%] flex flex-col justify-center">
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-4 py-6">
         <h2 className={`${styles.productTitle}`}>{data.name}</h2>
-        <p>{data.description}</p>
-        <div className="flex py-2 justify-between">
+        <p className="text-gray-700 mb-4">{data.description}</p>
+        <div className="flex justify-between items-center mb-4">
           <div className="flex">
-            <h5 className="font-[500] text-[18px] text-[#d55b45] pr-3 line-through">
+            <h5 className="text-sm text-gray-400 line-through pr-3">
               Rp. {data.originalPrice}
             </h5>
-            <h5 className="font-bold text-[20px] text-[#333] font-Roboto">
+            <h5 className="text-xl font-bold text-gray-800">
               Rp. {data.discountPrice}
             </h5>
           </div>
-          <span className="pr-3 font-[400] text-[17px] text-[#44a55e]">
-            {data.sold_out} sold
+          <span className="text-sm text-green-500">{data.sold_out} sold</span>
+        </div>
+        <div className="flex items-center mb-4">
+          <span className="text-sm text-gray-600">Stock: </span>
+          <span
+            className={`${
+              data.stock < 1 ? "text-red-600" : "text-green-600"
+            } ml-1`}
+          >
+            {data.stock < 1 ? "Out of stock" : `${data.stock} available`}
           </span>
         </div>
         <CountDown data={data} />
-        <br />
-        <div className="flex items-center">
+        <div className="mt-4 flex items-center">
           <Link to={`/product/${data._id}?isEvent=true`}>
-            <div className={`${styles.button} text-[#fff]`}>See Details</div>
+            <button className={`${styles.button} text-white`}>
+              See Details
+            </button>
           </Link>
-          <div
-            className={`${styles.button} text-[#fff] ml-5`}
+          <button
+            className={`${styles.button} text-white ml-4`}
             onClick={() => addToCartHandler(data)}
+            disabled={data.stock < 1}
           >
-            Add to cart
-          </div>
+            {data.stock < 1 ? "Out of Stock" : "Add to Cart"}
+          </button>
         </div>
       </div>
     </div>

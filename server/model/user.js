@@ -3,65 +3,69 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
-  name:{
+  name: {
     type: String,
     required: [true, "Please enter your name!"],
+    maxLength: [24, "Name must be at least 35 characters "],
   },
-  email:{
+  email: {
     type: String,
     required: [true, "Please enter your email!"],
+    maxLength: [30, "Email must be at least 50 characters"],
   },
-  password:{
+  password: {
     type: String,
     required: [true, "Please enter your password"],
     minLength: [4, "Password should be greater than 4 characters"],
+    maxLength: [16, "Password should be less than 16 characters"],
     select: false,
   },
-  phoneNumber:{
+  phoneNumber: {
     type: Number,
+    maxLength: [16, "Please enter a valid phone number for your account "],
   },
-  addresses:[
+  addresses: [
     {
       country: {
         type: String,
       },
-      city:{
+      city: {
         type: String,
       },
-      address1:{
+      address1: {
         type: String,
       },
-      address2:{
+      address2: {
         type: String,
       },
-      zipCode:{
+      zipCode: {
         type: Number,
       },
-      addressType:{
+      addressType: {
         type: String,
       },
-    }
+    },
   ],
-  role:{
+  role: {
     type: String,
     default: "user",
   },
-  avatar:{
+  avatar: {
     type: String,
     required: true,
- },
- createdAt:{
-  type: Date,
-  default: Date.now(),
- },
- resetPasswordToken: String,
- resetPasswordTime: Date,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
+  resetPasswordToken: String,
+  resetPasswordTime: Date,
+  stripeCustomerId: { type: String },
 });
 
-
 //  Hash password
-userSchema.pre("save", async function (next){
-  if(!this.isModified("password")){
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
     next();
   }
 
@@ -70,7 +74,7 @@ userSchema.pre("save", async function (next){
 
 // jwt token
 userSchema.methods.getJwtToken = function () {
-  return jwt.sign({ id: this._id}, process.env.JWT_SECRET_KEY,{
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRES,
   });
 };

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
 const doctorSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -38,12 +39,12 @@ const doctorSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  status: [
-    {
-      type: String,
-      default: "pending",
-    },
-  ],
+  startTime: {
+    type: String,
+  },
+  endTime: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),

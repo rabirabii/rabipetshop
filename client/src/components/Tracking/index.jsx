@@ -66,6 +66,26 @@ const Tracking = () => {
       flex: 0.8,
     },
     {
+      field: "deliveredAt",
+      headerName: "Delivered At",
+      type: "date",
+      minWidth: 150,
+      flex: 0.7,
+      renderCell: (params) => {
+        const dateValue = new Date(params.value);
+        const options = {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          timeZone: "Asia/Bangkok",
+        };
+        const formattedDate = dateValue.toLocaleString("en-US", options);
+        return <div>{formattedDate}</div>;
+      },
+    },
+    {
       field: " ",
       flex: 0.5,
       minWidth: 150,
@@ -95,6 +115,7 @@ const Tracking = () => {
         itemsQty: item.cart.length,
         total: "Rp." + item.totalPrice,
         status: item.status,
+        deliveredAt: item.deliveredAt,
       });
     });
   return (

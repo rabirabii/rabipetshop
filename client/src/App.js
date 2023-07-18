@@ -37,6 +37,7 @@ import {
   DoctorChatPage,
   AboutPage,
   FaqAllPage,
+  PaginatedProducts,
 } from "routes/Route";
 import {
   Dashboard,

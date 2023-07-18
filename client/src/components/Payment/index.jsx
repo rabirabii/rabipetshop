@@ -97,6 +97,7 @@ const Payment = () => {
 
   const paymentData = {
     amount: Math.round(orderData?.totalPrice * 100),
+    customerId: user.stripeCustomerId,
   };
 
   const paymentHandler = async (e) => {
@@ -127,22 +128,20 @@ const Payment = () => {
         toast.error(result.error.message);
       } else {
         if (result.paymentIntent.status === "succeeded") {
-          order.paymnentInfo = {
+          order.paymentInfo = {
             id: result.paymentIntent.id,
             status: result.paymentIntent.status,
             type: "Credit Card",
           };
 
-          await axios
-            .post(`${server}/order/create-order`, order, config)
-            .then((res) => {
-              setOpen(false);
-              navigate("/order/success");
-              toast.success("Order successful!");
-              localStorage.setItem("cartItems", JSON.stringify([]));
-              localStorage.setItem("latestOrder", JSON.stringify([]));
-              window.location.reload();
-            });
+          await axios.post(`${server}/order/create-order`, order, config);
+
+          setOpen(false);
+          navigate("/order/success");
+          toast.success("Order successful!");
+          localStorage.setItem("cartItems", JSON.stringify([]));
+          localStorage.setItem("latestOrder", JSON.stringify([]));
+          window.location.reload();
         }
       }
     } catch (error) {
@@ -165,14 +164,27 @@ const Payment = () => {
 
     await axios
       .post(`${server}/order/create-order`, order, config)
+
       .then((res) => {
         setOpen(false);
         navigate("/order/success");
         toast.success("Order successful!");
+
         localStorage.setItem("cartItems", JSON.stringify([]));
         localStorage.setItem("latestOrder", JSON.stringify([]));
         window.location.reload();
       });
+    // Send purchase receipt email
+    const receiptEmailData = {
+      email: user.email, // Ganti dengan email pelanggan yang valid
+      subject: "Purchase Receipt",
+    };
+
+    await axios.post(
+      `${server}/payment/send-receipt`,
+      receiptEmailData,
+      config
+    );
   };
 
   return (

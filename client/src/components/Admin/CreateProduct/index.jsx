@@ -19,7 +19,7 @@ const CreateProduct = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const [tags, setTags] = useState("");
+  const [manfaat, setManfaat] = useState("");
   const [originalPrice, setOriginalPrice] = useState();
   const [discountPrice, setDiscountPrice] = useState();
   const [stock, setStock] = useState();
@@ -55,7 +55,7 @@ const CreateProduct = () => {
     newForm.append("name", name);
     newForm.append("description", description);
     newForm.append("category", category);
-    newForm.append("tags", tags);
+    newForm.append("manfaat", manfaat);
     newForm.append("originalPrice", originalPrice);
     newForm.append("discountPrice", discountPrice);
     newForm.append("stock", stock);
@@ -140,13 +140,14 @@ const CreateProduct = () => {
         <br />
         <div>
           <label className="pb-2">Tags</label>
-          <input
+          <textarea
+            cols="30"
             type="text"
-            name="tags"
-            value={tags}
+            name="manfaat"
+            value={manfaat}
             className="mt-2 appearance-none block w-full px-3 h-[35px] border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            onChange={(e) => setTags(e.target.value)}
-            placeholder="Enter your product tags..."
+            onChange={(e) => setManfaat(e.target.value)}
+            placeholder="Enter your product manfaat..."
             style={{
               backdropFilter: "blur(8px)",
               color: colors.grey[500], // Atur warna font yang kontras

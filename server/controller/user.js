@@ -10,7 +10,7 @@ const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
 const sendToken = require("../utils/jwtToken");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
-
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 router.post("/create-user", upload.single("file"), async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -38,6 +38,12 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
       avatar: fileUrl,
     };
 
+    const stripeCustomer = await stripe.customers.create({
+      email: email,
+      name: name,
+    });
+    user.stripeCustomerId = stripeCustomer.id;
+
     const activationToken = createActivationToken(user);
 
     const activationUrl = `http://localhost:3000/activation/${activationToken}`;
@@ -46,8 +52,94 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
       await sendMail({
         email: user.email,
         subject: "Activate your account",
-        message: `Hello ${user.name}, Thank you for registrating to our Website ,
-        please click on the link to activate your account: ${activationUrl}`,
+        html: `
+          <html>
+            <head>
+              <link href="https://fonts.googleapis.com/css?family=Raleway&display=swap" rel="stylesheet">
+              <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+              <style>
+                body {
+                  font-family: 'Raleway', sans-serif;
+                  background-color: #f4f4f4;
+                  padding: 20px;
+                }
+                .container {
+                  max-width: 600px;
+                  margin: 0 auto;
+                  background-color: #ffffff;
+                  padding: 20px;
+                  border-radius: 5px;
+                  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+                  animation: fade-in 1s ease-in-out;
+                }
+                @keyframes fade-in {
+                  0% {
+                    opacity: 0;
+                  }
+                  100% {
+                    opacity: 1;
+                  }
+                }
+                .activation-heading {
+                  color: #008080;
+                  margin-top: 0;
+                  animation: slide-up 0.5s ease-in-out;
+                }
+                @keyframes slide-up {
+                  0% {
+                    transform: translateY(20px);
+                    opacity: 0;
+                  }
+                  100% {
+                    transform: translateY(0);
+                    opacity: 1;
+                  }
+                }
+                .activation-button {
+                  display: inline-block;
+                  margin-top: 20px;
+                  padding: 10px 20px;
+                  background-color: #ffffff;
+                  color: #008080;
+                  text-decoration: none;
+                  border-radius: 5px;
+                  border: 2px solid #008080;
+                }
+                .activation-button:hover {
+                  background-color: #008080;
+                  color: #ffffff;
+                }
+                .activation-message {
+                  margin-top: 20px;
+                  color: #333333;
+                  animation: slide-up 0.5s ease-in-out;
+                }
+                .appreciation-message {
+                  margin-top: 20px;
+                  color: #666666;
+                  animation: slide-up 0.5s ease-in-out;
+                }
+                .logo {
+                  text-align: center;
+                  margin-bottom: 20px;
+                  font-size: 24px;
+                  font-weight: bold;
+                  color: #008080;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="logo">Rabi Petshop🐇</div>
+                <h3 class="activation-heading">Activate Your Account</h3>
+                <p>Hello, <strong>${user.name}</strong>,</p>
+                <p class="activation-message">Thank you for registering at Rabi Petshop. To activate your account, please click the button below:</p>
+                <a class="activation-button" href="${activationUrl}" style="background-color: #008080; color: #ffffff;">Activate Account</a>
+                <p class="appreciation-message">We appreciate your decision to join our community. We can't wait to provide you with the best pet products and services.</p>
+              </div>
+            </body>
+          </html>
+        `,
       });
       res.status(201).json({
         success: true,
@@ -83,7 +175,7 @@ router.post(
       if (!newUser) {
         return next(new ErrorHandler("Invalid token", 400));
       }
-      const { name, email, password, avatar } = newUser;
+      const { name, email, password, avatar, stripeCustomerId } = newUser;
 
       let user = await User.findOne({ email });
 
@@ -95,6 +187,7 @@ router.post(
         email,
         avatar,
         password,
+        stripeCustomerId,
       });
 
       sendToken(user, 201, res);
@@ -346,7 +439,7 @@ router.put(
   })
 );
 
-// find user infoormation with the userId
+// find user information with the userId
 router.get(
   "/user-info/:id",
   catchAsyncErrors(async (req, res, next) => {

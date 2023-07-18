@@ -105,29 +105,22 @@ export const deleteProduct = (id) => async (dispatch) => {
 };
 
 // get all products
-export const getAllProducts =
-  (page = 1, limit = 4) =>
-  async (dispatch) => {
-    try {
-      dispatch({
-        type: "getAllProductsRequest",
-      });
+// get all products
+export const getAllProducts = () => async (dispatch) => {
+  try {
+    dispatch({
+      type: "getAllProductsRequest",
+    });
 
-      const { data } = await axios.get(`${server}/product/get-all-products`, {
-        params: { page, limit },
-        withCredentials: true,
-      });
-
-      dispatch({
-        type: "getAllProductsSuccess",
-        payload: data.products,
-        currentPage: data.currentPage,
-        totalPages: data.totalPages,
-      });
-    } catch (error) {
-      dispatch({
-        type: "getAllProductsFailed",
-        payload: error.response.data.message,
-      });
-    }
-  };
+    const { data } = await axios.get(`${server}/product/get-all-products`);
+    dispatch({
+      type: "getAllProductsSuccess",
+      payload: data.products,
+    });
+  } catch (error) {
+    dispatch({
+      type: "getAllProductsFailed",
+      payload: error.response.data.message,
+    });
+  }
+};

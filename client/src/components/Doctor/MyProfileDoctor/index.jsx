@@ -35,6 +35,8 @@ const ProfileDoctor = () => {
     doctor && doctor.licenseNumber
   );
   const [speciality, setSpeciality] = useState(doctor && doctor.speciality);
+  const [startTime, setStartTime] = useState(doctor && doctor.startTime);
+  const [endTime, setEndTime] = useState(doctor && doctor.endTime);
   const dispatch = useDispatch();
   const handleImage = async (e) => {
     e.preventDefault();
@@ -72,7 +74,9 @@ const ProfileDoctor = () => {
         graduatedFrom,
         experience,
         licenseNumber,
-        speciality
+        speciality,
+        startTime,
+        endTime
       )
     );
   };
@@ -101,6 +105,8 @@ const ProfileDoctor = () => {
             experience,
             speciality,
             licenseNumber,
+            startTime,
+            endTime,
           }}
           onSubmit={handleSubmit}
         >
@@ -221,6 +227,30 @@ const ProfileDoctor = () => {
                   onBlur={handleBlur}
                   error={touched.licenseNumber && !!errors.licenseNumber}
                   helperText={touched.licenseNumber && errors.licenseNumber}
+                />
+                <TextField
+                  fullWidth
+                  variant="filled"
+                  type="search"
+                  label="Start Time"
+                  name="startTime"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  onBlur={handleBlur}
+                  error={touched.startTime && !!errors.startTime}
+                  helperText={touched.startTime && errors.startTime}
+                />
+                <TextField
+                  fullWidth
+                  variant="filled"
+                  type="search"
+                  label="end Time"
+                  name="endTime"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  onBlur={handleBlur}
+                  error={touched.endTime && !!errors.endTime}
+                  helperText={touched.endTime && errors.endTime}
                 />
                 <TextField
                   fullWidth

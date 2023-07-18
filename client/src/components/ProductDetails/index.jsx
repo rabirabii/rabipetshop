@@ -29,6 +29,7 @@ const ProductDetails = ({ data }) => {
   const [select, setSelect] = useState(0);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(getAllProductsShop(data && data?.shop._id));
     if (wishlist && wishlist.find((i) => i._id === data?._id)) {
@@ -43,7 +44,7 @@ const ProductDetails = ({ data }) => {
       setCount(count + 1);
     } else {
       toast.error(
-        "The Product stock is " + data.stock + " You can not add more than it "
+        "The Product stock is " + data.stock + " You can not add more than it"
       );
     }
   };
@@ -92,7 +93,6 @@ const ProductDetails = ({ data }) => {
     );
 
   const avg = totalRatings / totalReviewsLength || 0;
-
   const averageRating = avg.toFixed(2);
 
   const handleMessageSubmit = async () => {
@@ -100,142 +100,161 @@ const ProductDetails = ({ data }) => {
       const groupTitle = data._id + user._id;
       const userId = user._id;
       const sellerId = data.shop._id;
-      await axios
-        .post(`${server}/conversation/create-new-conversation`, {
-          groupTitle,
-          userId,
-          sellerId,
-        })
-        .then((res) => {
-          navigate(`/inbox?${res.data.conversation._id}`);
-        })
-        .catch((error) => {
-          toast.error(error.response.data.message);
-        });
+
+      try {
+        const res = await axios.post(
+          `${server}/conversation/create-new-conversation`,
+          {
+            groupTitle,
+            userId,
+            sellerId,
+          }
+        );
+        navigate(`/inbox?${res.data.conversation._id}`);
+      } catch (error) {
+        toast.error(error.response.data.message);
+      }
     } else {
       toast.error("Please login to create a conversation");
     }
   };
-
   return (
     <div className="bg-white">
       {data ? (
-        <div className={`${styles.section} w-[90%] 800px:w-[80%]`}>
-          <div className="w-full py-5">
-            <div className="block w-full 800px:flex">
-              <div className="w-full 800px:w-[50%]">
+        <div className={`${styles.section} w-[90%] max-w-800 mx-auto py-5`}>
+          <div className="flex flex-wrap">
+            <div className="w-full lg:w-1/2">
+              <div className="w-1/2 mx-auto">
                 <img
                   src={`${backend_url}${data && data.images[select]}`}
                   alt=""
-                  className="w-[80%]"
+                  className="w-full h-auto rounded-lg"
+                  style={{ imageRendering: "crisp-edges" }}
                 />
-                <div className="w-full flex">
-                  {data &&
-                    data.images.map((i, index) => (
-                      <div
-                        className={`${
-                          select === 0 ? "border" : "null"
-                        } cursor-pointer`}
-                      >
-                        <img
-                          src={`${backend_url}${i}`}
-                          alt=""
-                          className="h-[200px] overflow-hidden mr-3 mt-3"
-                          onClick={() => setSelect(index)}
-                        />
-                      </div>
-                    ))}
-                  <div
-                    className={`${
-                      select === 1 ? "border" : "null"
-                    } cursor-pointer`}
-                  ></div>
-                </div>
               </div>
-              <div className="w-full 800px:w-[50%] pt-5">
-                <h1 className={`${styles.productTitle}`}>{data.name}</h1>
-                <p>{data.description}</p>
-                <div className="flex pt-3">
-                  <h4 className={`${styles.productDiscountPrice}`}>
-                    Rp. {data.discountPrice}
-                  </h4>
-                  <h3 className={`${styles.price}`}>
-                    {data.originalPrice ? data.originalPrice + "Rp." : null}
+              <div className="flex flex-wrap mt-6 lg:mt-0">
+                {data &&
+                  data.images.map((image, index) => (
+                    <div
+                      key={index}
+                      className={`cursor-pointer mx-1 border ${
+                        select === index ? "border-gray-500" : ""
+                      }`}
+                    >
+                      <img
+                        src={`${backend_url}${image}`}
+                        alt=""
+                        className="h-20 w-20 object-cover rounded-lg"
+                        onClick={() => setSelect(index)}
+                      />
+                    </div>
+                  ))}
+              </div>
+            </div>
+            <div className="w-full lg:w-1/2 lg:pl-8 mt-6 lg:mt-0">
+              <h1 className={`${styles.productTitle} text-4xl font-bold mb-2`}>
+                {data.name}
+              </h1>
+              <p className="text-gray-600 text-xl mb-4">{data.description}</p>
+              <div className="flex items-center mb-4">
+                <h4
+                  className={`${styles.productDiscountPrice} text-l font-semibold text-gray-800 mr-2`}
+                >
+                  Rp. {data.discountPrice}
+                </h4>
+                {data.originalPrice && (
+                  <h3
+                    className={`${styles.price} text-sm text-red-500 line-through`}
+                  >
+                    Rp. {data.originalPrice}
                   </h3>
-                </div>
-
-                <div className="flex items-center mt-12 justify-between pr-3">
-                  <div>
+                )}
+              </div>
+              <p className="text-gray-600 mb-4">
+                Available Stock: {data.stock}
+              </p>
+              {data.stock > 0 ? (
+                <div className="flex items-center mb-6">
+                  <div className="flex">
                     <button
-                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
+                      className="bg-teal-500 text-white font-bold rounded-l px-3 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
                       onClick={decrementCount}
                     >
                       -
                     </button>
-                    <span className="bg-gray-200 text-gray-800 font-medium px-4 py-[11px]">
+                    <span className="bg-gray-200 text-gray-800 font-medium px-4 py-2">
                       {count}
                     </span>
                     <button
-                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
+                      className="bg-teal-500 text-white font-bold rounded-r px-3 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
                       onClick={incrementCount}
                     >
                       +
                     </button>
                   </div>
-                  <div>
+                  <div className="ml-4">
                     {click ? (
                       <AiFillHeart
                         size={30}
-                        className="cursor-pointer"
+                        className="cursor-pointer text-red-500"
                         onClick={() => removeFromWishlistHandler(data)}
-                        color={click ? "red" : "#333"}
                         title="Remove from wishlist"
                       />
                     ) : (
                       <AiOutlineHeart
                         size={30}
-                        className="cursor-pointer"
+                        className="cursor-pointer text-gray-600"
                         onClick={() => addToWishlistHandler(data)}
-                        color={click ? "red" : "#333"}
                         title="Add to wishlist"
                       />
                     )}
                   </div>
                 </div>
-                <div
-                  className={`${styles.button} !mt-6 !rounded !h-11 flex items-center`}
+              ) : (
+                <p className="text-red-500 font-medium mb-4">Out of Stock</p>
+              )}
+
+              {data.stock > 0 ? (
+                <button
+                  className={`${styles.button} bg-[#6443d1] text-white font-medium mb-6 py-2 px-4 rounded`}
                   onClick={() => addToCartHandler(data._id)}
                 >
-                  <span className="text-white flex items-center">
-                    Add to cart <AiOutlineShoppingCart className="ml-1" />
-                  </span>
-                </div>
-                <div className="flex items-center pt-8">
+                  Add to Cart <AiOutlineShoppingCart className="ml-1" />
+                </button>
+              ) : (
+                <button
+                  className={`${styles.button} bg-[#6443d1] text-white font-medium mb-6 py-2 px-4 rounded`}
+                  disabled
+                >
+                  Out of Stock <AiOutlineShoppingCart className="ml-1" />
+                </button>
+              )}
+
+              <div className="flex items-center">
+                <Link to={`/shop/preview/${data?.shop._id}`}>
+                  <img
+                    src={`${backend_url}${data?.shop?.avatar}`}
+                    alt=""
+                    className="w-12 h-12 rounded-full mr-2"
+                  />
+                </Link>
+                <div>
                   <Link to={`/shop/preview/${data?.shop._id}`}>
-                    <img
-                      src={`${backend_url}${data?.shop?.avatar}`}
-                      alt=""
-                      className="w-[50px] h-[50px] rounded-full mr-2"
-                    />
+                    <h3 className={`${styles.shop_name} pb-1 pt-1`}>
+                      {data.shop.name}
+                    </h3>
                   </Link>
-                  <div className="pr-8">
-                    <Link to={`/shop/preview/${data?.shop._id}`}>
-                      <h3 className={`${styles.shop_name} pb-1 pt-1`}>
-                        {data.shop.name}
-                      </h3>
-                    </Link>
-                    <h5 className="pb-3 text-[15px]">
-                      ({averageRating}/5) Ratings
-                    </h5>
-                  </div>
-                  <div
-                    className={`${styles.button} bg-[#6443d1] mt-4 !rounded !h-11`}
-                    onClick={handleMessageSubmit}
-                  >
-                    <span className="text-white flex items-center">
-                      Send Message <AiOutlineMessage className="ml-1" />
-                    </span>
-                  </div>
+                  <h5 className="text-sm text-gray-600">
+                    ({averageRating}/5) Ratings
+                  </h5>
+                </div>
+                <div
+                  className={`${styles.button} bg-[#6443d1] ml-auto py-2 px-4 rounded`}
+                  onClick={handleMessageSubmit}
+                >
+                  <span className="text-white flex items-center">
+                    Send Message <AiOutlineMessage className="ml-1" />
+                  </span>
                 </div>
               </div>
             </div>
@@ -246,8 +265,6 @@ const ProductDetails = ({ data }) => {
             totalReviewsLength={totalReviewsLength}
             averageRating={averageRating}
           />
-          <br />
-          <br />
         </div>
       ) : null}
     </div>
@@ -272,7 +289,7 @@ const ProductDetailsInfo = ({
             }
             onClick={() => setActive(1)}
           >
-            Product Details
+            The Benefits
           </h5>
           {active === 1 ? (
             <div className={`${styles.active_indicator}`} />
@@ -308,7 +325,7 @@ const ProductDetailsInfo = ({
       {active === 1 ? (
         <>
           <p className="py-2 text-[18px] leading-8 pb-10 whitespace-pre-line">
-            {data.description}
+            {data.manfaat}
           </p>
         </>
       ) : null}

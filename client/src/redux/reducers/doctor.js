@@ -4,7 +4,7 @@ const initialState = {
   isLoading: false,
   currentPage: 1,
   totalPages: 1,
-
+  doctors: [],
   error: null,
 };
 

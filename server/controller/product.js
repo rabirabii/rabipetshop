@@ -9,6 +9,7 @@ const { upload } = require("../multer");
 const ErrorHandler = require("../utils/ErrorHandler");
 const fs = require("fs");
 const Features = require("../utils/Features");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 // create product
 router.post(
   "/create-product",
@@ -28,6 +29,24 @@ router.post(
         productData.shop = shop;
 
         const product = await Product.create(productData);
+
+        // Create the product in Stripe
+        const stripeProduct = await stripe.products.create({
+          name: product.name,
+          description: product.description,
+        });
+
+        const stripePrice = await stripe.prices.create({
+          product: stripeProduct.id,
+          unit_amount: product.discountPrice * 100,
+
+          currency: "idr",
+        });
+
+        product.stripeProductId = stripeProduct.id;
+        product.stripePriceId = stripePrice.id;
+        product.stripeProductLink = `https://dashboard.stripe.com/products/${stripeProduct.id}`;
+        await product.save();
 
         res.status(201).json({
           success: true,
@@ -176,25 +195,11 @@ router.get(
   "/get-all-products",
   catchAsyncErrors(async (req, res, next) => {
     try {
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 4;
-
-      const startIndex = (page - 1) * limit;
-      const endIndex = page * limit;
-
-      const totalProducts = await Product.countDocuments();
-      const totalPages = Math.ceil(totalProducts / limit);
-
-      const products = await Product.find()
-        .sort({ createdAt: -1 })
-        .skip(startIndex)
-        .limit(limit);
+      const products = await Product.find({});
 
       res.status(200).json({
         success: true,
         products,
-        currentPage: page,
-        totalPages,
       });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
@@ -202,6 +207,95 @@ router.get(
   })
 );
 
+// Paginated Products !!!
+router.get(
+  "/getAllProductsPaginated",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const page = parseInt(req.query.page) - 1 || 0;
+      const limit = parseInt(req.query.limit) || 5;
+      const search = req.query.search || "";
+      let sort = req.query.sort || "rating";
+      let category = req.query.category || "All";
+
+      const categoryOptions = [
+        "Cat",
+        "Dog",
+        "Fish",
+        "Small Animals",
+        "Bird",
+        "Reptile",
+      ];
+
+      category === "All"
+        ? (category = [...categoryOptions])
+        : (category = req.query.category.split(","));
+      req.query.sort ? (sort = req.query.sort.split(",")) : (sort = [sort]);
+
+      let sortBy = {};
+      if (sort[1]) {
+        sortBy[sort[0]] = sort[1];
+      } else {
+        sortBy[sort[0]] = "asc";
+      }
+
+      const products = await Product.find({
+        name: { $regex: search, $options: "i" },
+      })
+        .where("category")
+        .in([...category])
+        .sort(sortBy)
+        .skip(page * limit)
+        .limit(limit);
+
+      const total = await Product.countDocuments({
+        category: { $in: [...category] },
+        name: { $regex: search, $options: "i" },
+      });
+
+      const response = {
+        error: false,
+        total,
+        page: page + 1,
+        limit,
+        categorys: categoryOptions,
+        products,
+      };
+
+      res.status(200).json(response);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: true, message: "Internal Server Error" });
+    }
+  })
+);
+
+// For Paginations
+router.get("/paginatedProducts", async (req, res) => {
+  const products = await Product.find({});
+  const page = req.query.page;
+  const limit = req.query.limit;
+
+  const startIndex = (page - 1) * limit;
+  const lastIndex = page * limit;
+
+  const results = {};
+  results.totalProduct = products.length;
+  results.pageCount = Math.ceil(products.length / limit);
+
+  if (lastIndex < products.length) {
+    results.next = {
+      page: page + 1,
+    };
+  }
+  if (startIndex > 0) {
+    results.prev = {
+      page: page - 1,
+    };
+  }
+  results.result = products.slice(startIndex, lastIndex);
+  res.json(results);
+});
 // review for a product
 router.put(
   "/create-new-review",

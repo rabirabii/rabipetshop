@@ -133,8 +133,11 @@ const Cart = ({ setOpenCart }) => {
   );
 };
 
+const MAX_DESCRIPTION_LENGTH = 350;
+
 const CartSingle = ({ data, quantityChangeHandler, removeFromCartHandler }) => {
   const [value, setValue] = useState(data.qty);
+  const [showFullDescription, setShowFullDescription] = useState(false);
   const totalPrice = data.discountPrice * value;
 
   const increment = (data) => {
@@ -154,6 +157,49 @@ const CartSingle = ({ data, quantityChangeHandler, removeFromCartHandler }) => {
     quantityChangeHandler(updatedCartData);
   };
 
+  const toggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+
+  const renderDescription = () => {
+    if (
+      showFullDescription ||
+      data.description.length <= MAX_DESCRIPTION_LENGTH
+    ) {
+      return (
+        <>
+          <Typography>{data.description}</Typography>
+          {data.description.length > MAX_DESCRIPTION_LENGTH && (
+            <Typography
+              color={shades.primary[400]}
+              onClick={toggleDescription}
+              cursor="pointer"
+            >
+              Read Less
+            </Typography>
+          )}
+        </>
+      );
+    } else {
+      const shortenedDescription = data.description.substring(
+        0,
+        MAX_DESCRIPTION_LENGTH
+      );
+      return (
+        <>
+          <Typography>{shortenedDescription}</Typography>
+          <Typography
+            color={shades.primary[400]}
+            onClick={toggleDescription}
+            cursor="pointer"
+          >
+            Read More
+          </Typography>
+        </>
+      );
+    }
+  };
+
   return (
     <Box borderBottom={1} p={2}>
       <FlexBox>
@@ -161,9 +207,7 @@ const CartSingle = ({ data, quantityChangeHandler, removeFromCartHandler }) => {
           <Typography>{data.id}</Typography>
         </Box>
         <Box flex="1 1 40%">
-          <Typography fontWeight="bold">
-            Images of Product : <br />
-          </Typography>
+          <Typography fontWeight="bold">Images of Product:</Typography>
           <img
             alt={data.name}
             width="125px"
@@ -174,11 +218,11 @@ const CartSingle = ({ data, quantityChangeHandler, removeFromCartHandler }) => {
         <Box flex="1 1 60%">
           <FlexBox mb={1}>
             <Typography fontWeight="bold">
-              Name of Product : <br />
+              Name of Product: <br />
               {data.name}
             </Typography>
             <Typography variant="p" fontWeight="bold">
-              Price : <br /> Rp. {data.discountPrice} * {value}
+              Price: <br /> Rp. {data.discountPrice} * {value}
             </Typography>
             <Typography fontWeight="bold">
               Total Price <br />
@@ -191,10 +235,7 @@ const CartSingle = ({ data, quantityChangeHandler, removeFromCartHandler }) => {
               <CloseIcon />
             </IconButton>
           </FlexBox>
-          <Typography>
-            Description <br />
-            {data.description}
-          </Typography>
+          {renderDescription()}
           <FlexBox mt={2}>
             <Box
               display="flex"
@@ -204,7 +245,7 @@ const CartSingle = ({ data, quantityChangeHandler, removeFromCartHandler }) => {
               <IconButton onClick={() => decrement(data)}>
                 <Remove />
               </IconButton>
-              <Typography>Quantity : {data.qty}</Typography>
+              <Typography>Quantity: {data.qty}</Typography>
               <IconButton onClick={() => increment(data)}>
                 <Add />
               </IconButton>

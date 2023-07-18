@@ -3,9 +3,19 @@ import { useSelector } from "react-redux";
 import styles from "../../styles/styles";
 import ProductCard from "../ProductCard";
 import { Box, Typography } from "@mui/material";
+import { useState } from "react";
 
 const FeaturedProduct = () => {
+  const [data, setData] = useState([]);
   const { allProducts } = useSelector((state) => state.products);
+  useEffect(() => {
+    const allProductsData = allProducts ? [...allProducts] : [];
+    const sortedData = allProductsData?.sort(
+      (a, b) => a.discountPrice - b.discountPrice
+    );
+    const firstFive = sortedData && sortedData.slice(0, 10);
+    setData(firstFive);
+  }, [allProducts]);
 
   return (
     <Box width="80%" margin="80px" auto>
@@ -20,12 +30,10 @@ const FeaturedProduct = () => {
         rowGap="20px"
         columnGap="1.35%"
       >
-        {allProducts && allProducts.length !== 0 && (
+        {data && data.length !== 0 && (
           <>
-            {allProducts &&
-              allProducts.map((i, index) => (
-                <ProductCard data={i} key={index} />
-              ))}
+            {data &&
+              data.map((i, index) => <ProductCard data={i} key={index} />)}
           </>
         )}
       </Box>

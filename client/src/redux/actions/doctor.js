@@ -32,7 +32,9 @@ export const updateDoctorInformation =
     graduatedFrom,
     experience,
     licenseNumber,
-    speciality
+    speciality,
+    startTime,
+    endTime
   ) =>
   async (dispatch) => {
     try {
@@ -51,6 +53,8 @@ export const updateDoctorInformation =
           experience,
           licenseNumber,
           speciality,
+          startTime,
+          endTime,
         },
         {
           withCredentials: true,

@@ -299,6 +299,8 @@ router.put(
         experience,
         licenseNumber,
         speciality,
+        startTime,
+        endTime,
       } = req.body;
 
       const doctor = await Doctor.findOne({ email }).select("+password");
@@ -318,7 +320,8 @@ router.put(
       doctor.experience = experience;
       doctor.licenseNumber = licenseNumber;
       doctor.speciality = speciality;
-
+      doctor.startTime = startTime;
+      doctor.endTime = endTime;
       await doctor.save();
 
       res.status(201).json({

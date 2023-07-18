@@ -1,4 +1,4 @@
-const app = require("./index");
+const app = require("./app");
 const connectDatabase = require("./db/Database");
 
 // Handling uncaught Exception

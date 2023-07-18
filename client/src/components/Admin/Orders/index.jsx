@@ -125,6 +125,12 @@ const Orders = () => {
       flex: 0.8,
     },
     {
+      field: "date",
+      HeaderName: "Created Date",
+      minWidth: 150,
+      flex: 0.7,
+    },
+    {
       field: " ",
       flex: 1,
       minWidth: 150,
@@ -153,6 +159,7 @@ const Orders = () => {
         itemsQty: item.cart.length,
         total: "Rp." + item.totalPrice,
         status: item.status,
+        date: item.createdAt,
       });
     });
   return (

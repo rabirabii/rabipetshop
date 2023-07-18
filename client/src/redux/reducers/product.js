@@ -2,9 +2,6 @@ import { createReducer } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoading: true,
-  allProducts: [],
-  currentPage: 1,
-  totalPages: 1,
 };
 
 export const productReducer = createReducer(initialState, {
@@ -68,10 +65,7 @@ export const productReducer = createReducer(initialState, {
   getAllProductsSuccess: (state, action) => {
     state.isLoading = false;
     state.allProducts = action.payload;
-    state.currentPage = action.payload.currentPage;
-    state.totalPages = action.payload.totalPages;
   },
-
   getAllProductsFailed: (state, action) => {
     state.isLoading = false;
     state.error = action.payload;
